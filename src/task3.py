@@ -161,10 +161,10 @@ if __name__ == '__main__':
         for k in range(N):
             graph[k] = list(map(int,lines[k+1].split()))
         graphs.append(graph)
-
     ### データ分割
     # 1600組を学習用(x,y)、400組を検証用(vx,vy)とする。
-    x, y, vx, vy = graphs[:1600], labels[:1600], graphs[1600:], labels[1600:]
+    Ntrain = 1600
+    x, y, vx, vy = graphs[:Ntrain], labels[:Ntrain], graphs[Ntrain:], labels[Ntrain:]
 
     ### ハイパーパラメータ設定
     D, T = 8, 2
@@ -205,4 +205,4 @@ if __name__ == '__main__':
     # 学習曲線プロットをファイルに保存
     plt.savefig("task3_plot.pdf")
     # lossデータをファイルに保存
-    np.saves_compressed("task3_losses.npz",losses_SGD,losses_mSGD)
+    np.savez_compressed("task3_losses.npz",losses_SGD,losses_mSGD)
