@@ -84,13 +84,19 @@ if __name__ == '__main__':
     gnn4 = GNN4(D,T)
     gnn3 = GNN3(D,T,W0=gnn4.W[0], A0=gnn4.A, b0=gnn4.b[0])
 
+    from task4a import Adam
+    optstr = ['SGD', 'mSGD', 'Adam']
+    opts = [SGD, MomentumSGD, Adam]
+    optn = 2 # Adamを使用
+    opt = opts[optn]
+
     # それぞれ学習。
     losses_gnn3 = gnn3.fit(x, y, validation=(vx,vy),
                            epochs=epochs,
-                           optimizer=MomentumSGD())
+                           optimizer=opt())
     losses_gnn4 = gnn4.fit(x, y, validation=(vx,vy),
                            epochs=epochs,
-                           optimizer=MomentumSGD())
+                           optimizer=opt())
     # lossデータをファイルに保存
     np.savez("task4b_losses.npz",losses_gnn3,losses_gnn4)
     np.savez("task4b_theta.npz", gnn3.Theta, gnn4.Theta)
@@ -99,17 +105,17 @@ if __name__ == '__main__':
     n = len(losses_gnn3[0])
     x_arr = np.array(range(n))*(epochs/n)
     loss_max = 2
-    margin = 0.25
-    plt.ylim(-margin,loss_max+margin)
-    plt.xlim(-margin,epochs)
+    margin = 0.025
+    plt.ylim(loss_max*(-margin),loss_max*(1+margin))
+    plt.xlim(-margin*epochs,epochs)
     p1=plt.plot(x_arr,losses_gnn3[0])  # loss, GNN3
-    p2=plt.plot(x_arr,losses_gnn3[2])  # vloss, GNN3
+    p2=plt.plot(x_arr,losses_gnn3[3])  # vloss, GNN3
     p3=plt.plot(x_arr,losses_gnn4[0])    # loss, GNN4
-    p4=plt.plot(x_arr,losses_gnn4[2])    # vloss, GNN4
+    p4=plt.plot(x_arr,losses_gnn4[3])    # vloss, GNN4
     plt.grid(True)
     plt.legend((p1[0],p2[0],p3[0],p4[0]),
-               ("loss, GNN3", "vloss, GNN3",
-                "loss, GNN4", "vloss, GNN4"
+               ("loss, GNN3 (with %s)" % optstr[optn], "vloss, GNN3 (with %s)" % optstr[optn],
+                "loss, GNN4 (with %s)" % optstr[optn], "vloss, GNN4 (with %s)" % optstr[optn]
                 ),
                 loc=1)
     # 学習曲線プロットをファイルに保存

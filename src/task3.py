@@ -205,13 +205,13 @@ if __name__ == '__main__':
     n = len(losses_SGD[0])
     x_arr = np.array(range(n))*(epochs/n)
     loss_max = 10
-    margin = 0.25
-    plt.ylim(-margin,loss_max+margin)
-    plt.xlim(-margin,epochs)
-    p1=plt.plot(x_arr,losses_SGD[0])  # loss, SGD
-    p2=plt.plot(x_arr,losses_SGD[3])  # vloss, SGD
-    p3=plt.plot(x_arr,losses_mSGD[0])    # loss, Momentum SGD
-    p4=plt.plot(x_arr,losses_mSGD[3])    # vloss, Momentum SGD
+    margin = 0.025
+    plt.ylim(loss_max*(-margin),loss_max*(1+margin))
+    plt.xlim(-margin*epochs,epochs)
+    p1=plt.plot(x_arr,losses_SGD[0],zorder=0)  # loss, SGD
+    p2=plt.plot(x_arr,losses_SGD[3],zorder=2)  # vloss, SGD
+    p3=plt.plot(x_arr,losses_mSGD[0],zorder=1)    # loss, Momentum SGD
+    p4=plt.plot(x_arr,losses_mSGD[3],zorder=3)    # vloss, Momentum SGD
     plt.grid(True)
     plt.legend((p1[0],p2[0],p3[0],p4[0]),
                ("loss, SGD", "vloss, SGD",
