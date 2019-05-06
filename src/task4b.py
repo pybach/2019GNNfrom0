@@ -36,7 +36,7 @@ class GNN4(GNN3):
         Asize=self.D
         return (self.Theta[:Wsize].reshape((self.Wlayers,self.D,self.D)),
                 self.Theta[Wsize:Wsize+Asize],
-                self.Theta[Wsize+Asize])
+                self.Theta[Wsize+Asize:Wsize+Asize+1])
 
     ############################################################################
     ### 集約2を多層ニューラルネットに変更。
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     # GNN3とGNN4
     # あまり意味はないかもしれないが、気休め程度に初期値を合わせておく。
     gnn4 = GNN4(D,T)
-    gnn3 = GNN3(D,T,W0=gnn4.W[0], A0=gnn4.A, b0=gnn4.b)
+    gnn3 = GNN3(D,T,W0=gnn4.W[0], A0=gnn4.A, b0=gnn4.b[0])
 
     # それぞれ学習。
     losses_gnn3 = gnn3.fit(x, y, validation=(vx,vy),
@@ -92,8 +92,11 @@ if __name__ == '__main__':
     losses_gnn4 = gnn4.fit(x, y, validation=(vx,vy),
                            epochs=epochs,
                            optimizer=MomentumSGD())
+    # lossデータをファイルに保存
+    np.savez_compressed("task4b_losses.npz",losses_gnn3,losses_gnn4)
+    
     ### 学習曲線の描画
-    n = len(losses_SGD[0])
+    n = len(losses_gnn3[0])
     x_arr = np.array(range(n))*(epochs/n)
     loss_max = 10
     margin = 0.25
@@ -111,5 +114,3 @@ if __name__ == '__main__':
                 loc=1)
     # 学習曲線プロットをファイルに保存
     plt.savefig("task4b_plot.pdf")
-    # lossデータをファイルに保存
-    np.savez_compressed("task4b_losses.npz",losses_gnn3,losses_gnn4)

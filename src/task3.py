@@ -15,6 +15,9 @@ class GNN3(GNN2):
     def predict(self,x):
         return np.array([ self.p(g) for g in x ])
 
+    def acc(self, x, y):
+        n = len(y)
+        return len(np.where(np.abs(self.predict(x[:n])-np.array(y)) < 0.5)[0])/n
 
     ############################################################################
     ### データセット(x,y) からの学習メソッド
@@ -51,11 +54,16 @@ class GNN3(GNN2):
         # 学習前全データ平均をepoch毎のログに格納。
         batch_losses = []
         epoch_losses = []
+        epoch_accs = []
+        # lossとaccを別々に計算しており無駄だが、時間の都合上目を瞑る。
         epoch_losses.append(np.mean([self.loss(x[i],y[i]) for i in range(n)]))
+        epoch_accs.append(self.acc(x,y))
         if vld:
             batch_vlosses = []
             epoch_vlosses = []
+            epoch_vaccs = []
             epoch_vlosses.append(np.mean([self.loss(vx[i],vy[i]) for i in range(vn)]))        
+            epoch_vaccs.append(self.acc(vx,vy))
 
         for e in range(epochs):
             if shuffle:
@@ -76,8 +84,8 @@ class GNN3(GNN2):
                     if valid_marker + (end-start) > vn:
                         valid_marker = 0
                         valid_order = np.random.permutation(vn)
-                    batch_vloss = np.mean([ self.loss(vx[i],vy[i])
-                                            for i in valid_order[valid_marker:valid_marker+(end-start)]])
+                    batch_vloss = np.mean(
+                        [ self.loss(vx[i],vy[i]) for i in valid_order[valid_marker:valid_marker+(end-start)]])
                     batch_vlosses.append(batch_vloss)
 
                 ### Thetaの更新。
@@ -89,17 +97,18 @@ class GNN3(GNN2):
 
             # epoch終了時はtrain/validationとも全データで評価。
             # 勾配計算のコストが巨大なので、ここの計算量は特に考慮しなくてよい。
-            epoch_loss = np.mean([self.loss(x[i],y[i]) for i in range(n)])
-            epoch_losses.append(epoch_loss)
+            epoch_losses.append(np.mean([self.loss(x[i],y[i]) for i in range(n)]))
+            epoch_accs.append(self.acc(x,y))
             if vld:
                 epoch_vloss = np.mean([self.loss(vx[i],vy[i]) for i in range(vn)])
                 epoch_vlosses.append(epoch_vloss)
+                epoch_vaccs.append(self.acc(vx,vy))
 
-        # lossの履歴を返す。
+        # loss, accの履歴を返す。
         if vld:
-            return batch_losses, epoch_losses, batch_vlosses, epoch_vlosses
+            return batch_losses, epoch_losses, epoch_accs, batch_vlosses, epoch_vlosses, epoch_vaccs
         else:
-            return batch_losses, epoch_losses
+            return batch_losses, epoch_losses, epoch_accs
 # end of GNN3
 
 ################################################################################
@@ -179,14 +188,20 @@ if __name__ == '__main__':
     losses_SGD = gnn3.fit(x, y, validation=(vx,vy),
                           epochs=epochs,
                           optimizer=SGD())
+    Theta_SGD = np.copy(gnn3.Theta)
     # 初期値を復元
     gnn3.Theta[:] = Theta0
     # Momentum SGD
     losses_mSGD = gnn3.fit(x, y, validation=(vx,vy),
                            epochs=epochs,
                            optimizer=MomentumSGD())
+    Theta_mSGD = np.copy(gnn3.Theta)
+    # lossデータをファイルに保存
+    np.savez("task3_losses.npz",losses_SGD,losses_mSGD)
+    # 学習済みパラメータを保存
+    np.savez("task4a_theta.npz", Theta_SGD, Theta_mSGD)
 
-    ### 学習曲線の描画
+    ### 学習曲線の描画 (Matplotlib)
     n = len(losses_SGD[0])
     x_arr = np.array(range(n))*(epochs/n)
     loss_max = 10
@@ -194,9 +209,9 @@ if __name__ == '__main__':
     plt.ylim(-margin,loss_max+margin)
     plt.xlim(-margin,epochs)
     p1=plt.plot(x_arr,losses_SGD[0])  # loss, SGD
-    p2=plt.plot(x_arr,losses_SGD[2])  # vloss, SGD
+    p2=plt.plot(x_arr,losses_SGD[3])  # vloss, SGD
     p3=plt.plot(x_arr,losses_mSGD[0])    # loss, Momentum SGD
-    p4=plt.plot(x_arr,losses_mSGD[2])    # vloss, Momentum SGD
+    p4=plt.plot(x_arr,losses_mSGD[3])    # vloss, Momentum SGD
     plt.grid(True)
     plt.legend((p1[0],p2[0],p3[0],p4[0]),
                ("loss, SGD", "vloss, SGD",
@@ -204,5 +219,3 @@ if __name__ == '__main__':
                 loc=1)
     # 学習曲線プロットをファイルに保存
     plt.savefig("task3_plot.pdf")
-    # lossデータをファイルに保存
-    np.savez_compressed("task3_losses.npz",losses_SGD,losses_mSGD)
