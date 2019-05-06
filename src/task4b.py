@@ -1,41 +1,7 @@
 ################################################################################
-### 課題4 Adamの実装と多層ニューラルネットワーク化
+### 課題4(b) 多層ニューラルネットワーク化
 ################################################################################
-from task3 import *
-
-
-################################################################################
-### Adamの実装
-### Based on: https://arxiv.org/abs/1412.6980
-### ハイパーパラメータのデフォルト値は全て原論文に倣った。
-class Adam(Optimizer):
-    def __init__(self,
-                 alpha=1.0e-3, beta1=0.9, beta2=0.999,
-                 epsilon=1.0e-8):
-        self.alpha = alpha
-        self.beta1 = beta1
-        self.beta2 = beta2
-        self.epsilon = epsilon
-        self.m = None
-        self.v = None
-        self.pw_beta1 = 1
-        self.pw_beta2 = 1
-
-    def update(self, grad):
-        grad2 = grad**2
-        if self.m is None:
-            self.m = np.zeros(len(grad))
-            self.v = np.zeros(len(grad))
-        self.m *= self.beta1
-        self.m += (1-self.beta1)*grad
-        self.v *= self.beta2
-        self.v += (1-self.beta2)*grad2
-        self.pw_beta1 *= self.beta1
-        self.pw_beta2 *= self.beta2
-        mhat = self.m/(1-self.pw_beta1)
-        vhat = self.v/(1-self.pw_beta2)
-        dtheta = -self.alpha*mhat/(np.sqrt(vhat)+self.epsilon)
-        return dtheta
+from task4a import *
 
 
 ################################################################################
@@ -82,7 +48,7 @@ class GNN4(GNN3):
 
 
 ################################################################################
-### 課題4　動作テスト
+### 課題4(b)　動作テスト
 ################################################################################
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
@@ -110,29 +76,18 @@ if __name__ == '__main__':
     x, y, vx, vy = graphs[:Ntrain], labels[:Ntrain], graphs[Ntrain:], labels[Ntrain:]
 
     ############################################################################
-    ### Adamの動作確認と性能評価（GNN3）
+    ### 動作確認と性能評価（GNN4とGNN3の比較）
     D, T = 8, 2
     epochs = 10
 
-    ### SGD、Momentum SGD、Adam
-    ### 比較のため、同一初期値で行う。
+    # GNN3
     gnn3 = GNN3(D,T)
-    # 初期値を保存
-    Theta0 = np.copy(gnn3.Theta)
-    ### SGD
-    losses_SGD = gnn3.fit(x, y, validation=(vx,vy),
-                          epochs=epochs,
-                          optimizer=SGD())
-    # 初期値を復元
-    gnn3.Theta[:] = Theta0
-    # Momentum SGD
-    losses_mSGD = gnn3.fit(x, y, validation=(vx,vy),
+    losses_gnn3 = gnn3.fit(x, y, validation=(vx,vy),
                            epochs=epochs,
-                           optimizer=MomentumSGD())
-    # 初期値を復元
-    gnn3.Theta[:] = Theta0
-    # Adam
-    losses_Adam = gnn3.fit(x, y, validation=(vx,vy),
+                           optimizer=Adam())
+    # GNN4
+    gnn4 = GNN4(D,T)
+    losses_gnn4 = gnn4.fit(x, y, validation=(vx,vy),
                            epochs=epochs,
                            optimizer=Adam())
     ### 学習曲線の描画
