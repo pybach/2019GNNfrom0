@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
     ### 結果出力
     # ファイルに保存する場合。
-    # np.save('gnn2_losses.npy', np.array(losses))
+    # np.save('task2_losses.npy', np.array(losses))
 
     # 単に表示する。
     print('Data No.%d' % n)
