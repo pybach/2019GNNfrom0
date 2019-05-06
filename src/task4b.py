@@ -87,7 +87,7 @@ if __name__ == '__main__':
     from task4a import Adam
     optstr = ['SGD', 'mSGD', 'Adam']
     opts = [SGD, MomentumSGD, Adam]
-    optn = 2 # Adamを使用
+    optn = 1 # MomentumSGDを使用
     opt = opts[optn]
 
     # それぞれ学習。
@@ -115,8 +115,7 @@ if __name__ == '__main__':
     plt.grid(True)
     plt.legend((p1[0],p2[0],p3[0],p4[0]),
                ("loss, GNN3 (with %s)" % optstr[optn], "vloss, GNN3 (with %s)" % optstr[optn],
-                "loss, GNN4 (with %s)" % optstr[optn], "vloss, GNN4 (with %s)" % optstr[optn]
-                ),
-                loc=1)
+                "loss, GNN4 (with %s)" % optstr[optn], "vloss, GNN4 (with %s)" % optstr[optn]),
+               loc=1)
     # 学習曲線プロットをファイルに保存
     plt.savefig("task4b_plot.pdf")

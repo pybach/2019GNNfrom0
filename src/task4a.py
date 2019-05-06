@@ -118,8 +118,7 @@ if __name__ == '__main__':
     plt.legend((p1[0],p2[0],p3[0],p4[0],p5[0],p6[0]),
                ("loss, SGD", "vloss, SGD",
                 "loss, momentum SGD", "vloss, momentum SGD",
-                "loss, Adam", "vloss, Adam"
-                ),
-                loc=1)
+                "loss, Adam", "vloss, Adam"),
+               loc=1)
     # 学習曲線プロットをファイルに保存
     plt.savefig("task4a_plot.pdf")
