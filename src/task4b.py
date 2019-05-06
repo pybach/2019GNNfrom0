@@ -1,12 +1,11 @@
 ################################################################################
 ### 課題4(b) 多層ニューラルネットワーク化
 ################################################################################
-from task4a import *
-
+from task3 import *
 
 ################################################################################
-### 多層ニューラルネットワーク化
-### 集約2で、Wによるニューラルネットを多層化する。
+### 多層ニューラルネットワーク化したクラスGNN4を作成。
+### 集約2で、Wによるニューラルネットを多層化する。そのためWを3次元配列に。
 class GNN4(GNN3):
     def __init__(self, D, T,
                  W0=None, A0=None, b0=None, sigma=0.4,
@@ -78,7 +77,7 @@ if __name__ == '__main__':
     ############################################################################
     ### 動作確認と性能評価（GNN4とGNN3の比較）
     D, T = 8, 2
-    epochs = 10
+    epochs = 30
 
     # GNN3とGNN4
     # あまり意味はないかもしれないが、気休め程度に初期値を合わせておく。
@@ -93,12 +92,13 @@ if __name__ == '__main__':
                            epochs=epochs,
                            optimizer=MomentumSGD())
     # lossデータをファイルに保存
-    np.savez_compressed("task4b_losses.npz",losses_gnn3,losses_gnn4)
+    np.savez("task4b_losses.npz",losses_gnn3,losses_gnn4)
+    np.savez("task4b_theta.npz", gnn3.Theta, gnn4.Theta)
     
     ### 学習曲線の描画
     n = len(losses_gnn3[0])
     x_arr = np.array(range(n))*(epochs/n)
-    loss_max = 10
+    loss_max = 2
     margin = 0.25
     plt.ylim(-margin,loss_max+margin)
     plt.xlim(-margin,epochs)
