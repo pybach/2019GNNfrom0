@@ -48,7 +48,7 @@ class GNN4(GNN3):
 
 
 ################################################################################
-### 課題4(b)　動作テスト
+### 課題4(b)　動作テストと性能評価
 ################################################################################
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
@@ -80,16 +80,18 @@ if __name__ == '__main__':
     D, T = 8, 2
     epochs = 10
 
-    # GNN3
-    gnn3 = GNN3(D,T)
+    # GNN3とGNN4
+    # あまり意味はないかもしれないが、気休め程度に初期値を合わせておく。
+    gnn4 = GNN4(D,T)
+    gnn3 = GNN3(D,T,W0=gnn4.W[0], A0=gnn4.A, b0=gnn4.b)
+
+    # それぞれ学習。
     losses_gnn3 = gnn3.fit(x, y, validation=(vx,vy),
                            epochs=epochs,
-                           optimizer=Adam())
-    # GNN4
-    gnn4 = GNN4(D,T)
+                           optimizer=MomentumSGD())
     losses_gnn4 = gnn4.fit(x, y, validation=(vx,vy),
                            epochs=epochs,
-                           optimizer=Adam())
+                           optimizer=MomentumSGD())
     ### 学習曲線の描画
     n = len(losses_SGD[0])
     x_arr = np.array(range(n))*(epochs/n)
@@ -97,20 +99,17 @@ if __name__ == '__main__':
     margin = 0.25
     plt.ylim(-margin,loss_max+margin)
     plt.xlim(-margin,epochs)
-    p1=plt.plot(x_arr,losses_SGD[0])  # loss, SGD
-    p2=plt.plot(x_arr,losses_SGD[2])  # vloss, SGD
-    p3=plt.plot(x_arr,losses_mSGD[0])    # loss, Momentum SGD
-    p4=plt.plot(x_arr,losses_mSGD[2])    # vloss, Momentum SGD
-    p5=plt.plot(x_arr,losses_mSGD[0])    # loss, Adam
-    p6=plt.plot(x_arr,losses_mSGD[2])    # vloss, Adam
+    p1=plt.plot(x_arr,losses_gnn3[0])  # loss, GNN3
+    p2=plt.plot(x_arr,losses_gnn3[2])  # vloss, GNN3
+    p3=plt.plot(x_arr,losses_gnn4[0])    # loss, GNN4
+    p4=plt.plot(x_arr,losses_gnn4[2])    # vloss, GNN4
     plt.grid(True)
-    plt.legend((p1[0],p2[0],p3[0],p4[0],p5[0],p6[0]),
-               ("loss, SGD", "vloss, SGD",
-                "loss, momentum SGD", "vloss, momentum SGD",
-                "loss, Adam", "vloss, Adam"
+    plt.legend((p1[0],p2[0],p3[0],p4[0]),
+               ("loss, GNN3", "vloss, GNN3",
+                "loss, GNN4", "vloss, GNN4"
                 ),
                 loc=1)
     # 学習曲線プロットをファイルに保存
-    plt.savefig("task4_Adam_plot.pdf")
+    plt.savefig("task4b_plot.pdf")
     # lossデータをファイルに保存
-    np.savez_compressed("task4_Adam_losses.npz",losses_SGD,losses_mSGD,losses_Adam)
+    np.savez_compressed("task4b_losses.npz",losses_gnn3,losses_gnn4)
