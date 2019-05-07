@@ -108,12 +108,12 @@ if __name__ == '__main__':
     margin = 0.025
     plt.ylim(loss_max*(-margin),loss_max*(1+margin))
     plt.xlim(-margin*epochs,epochs)
-    p1=plt.plot(x_arr,losses_SGD[0],zorder=0)  # loss, SGD
-    p2=plt.plot(x_arr,losses_SGD[3],zorder=3)  # vloss, SGD
-    p3=plt.plot(x_arr,losses_mSGD[0],zorder=1)    # loss, Momentum SGD
-    p4=plt.plot(x_arr,losses_mSGD[3],zorder=4)    # vloss, Momentum SGD
-    p5=plt.plot(x_arr,losses_Adam[0],zorder=2)    # loss, Adam
-    p6=plt.plot(x_arr,losses_Adam[3],zorder=5)    # vloss, Adam
+    p1=plt.plot(x_arr, losses_SGD[0], zorder=0) # loss, SGD
+    p2=plt.plot(x_arr, losses_SGD[3], zorder=3) # vloss, SGD
+    p3=plt.plot(x_arr, losses_mSGD[0], zorder=1)    # loss, Momentum SGD
+    p4=plt.plot(x_arr, losses_mSGD[3], zorder=4)    # vloss, Momentum SGD
+    p5=plt.plot(x_arr, losses_Adam[0], zorder=2)    # loss, Adam
+    p6=plt.plot(x_arr, losses_Adam[3], zorder=5)    # vloss, Adam
     plt.grid(True)
     plt.legend((p1[0],p2[0],p3[0],p4[0],p5[0],p6[0]),
                ("loss, SGD", "vloss, SGD",

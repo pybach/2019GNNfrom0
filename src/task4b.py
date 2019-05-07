@@ -10,19 +10,19 @@ class GNN4(GNN3):
     def __init__(self, D, T,
                  W0=None, A0=None, b0=None, sigma=0.4,
                  epsilon=1.0e-3,
-                 Wlayers=2):
-        self.Wlayers=Wlayers
+                 Nw=2):
+        self.Nw=Nw
         super().__init__(D, T,
                          W0=W0, A0=A0, b0=b0, sigma=sigma,
                          epsilon=epsilon)
 
     ############################################################################
-    ### W.shape = (Wlayers,D,D) である。
+    ### W.shape = (Nw,D,D) である。
     ### それに合わせ、パラメータ初期化に関係する関数を上書きする。
     def init_Theta(self, sigma, W0, A0, b0):
-        # W0: Wlayers x D x D
+        # W0: Nw x D x D
         if W0 is None:
-            W0 = np.random.normal(0,sigma,(self.Wlayers,self.D,self.D))
+            W0 = np.random.normal(0,sigma,(self.Nw,self.D,self.D))
         if A0 is None:
             A0 = np.random.normal(0,sigma,self.D)
         if b0 is None:
@@ -31,9 +31,9 @@ class GNN4(GNN3):
         self.W, self.A, self.b = self.decode_Theta()
 
     def decode_Theta(self):
-        Wsize=self.Wlayers*self.D*self.D
+        Wsize=self.Nw*self.D*self.D
         Asize=self.D
-        return (self.Theta[:Wsize].reshape((self.Wlayers,self.D,self.D)),
+        return (self.Theta[:Wsize].reshape((self.Nw,self.D,self.D)),
                 self.Theta[Wsize:Wsize+Asize],
                 self.Theta[Wsize+Asize:Wsize+Asize+1])
 
@@ -41,7 +41,7 @@ class GNN4(GNN3):
     ### 集約2を多層ニューラルネットに変更。
     def aggregate2(self, a):
         x = a
-        for i in range(self.Wlayers):
+        for i in range(self.Nw):
             x = self.f(np.dot(x, self.W[i]))
         return x
 
@@ -98,7 +98,7 @@ if __name__ == '__main__':
                            epochs=epochs,
                            optimizer=opt())
     # lossデータをファイルに保存
-    np.savez("task4b_losses.npz",losses_gnn3,losses_gnn4)
+    np.savez("task4b_losses.npz",losses_gnn3, losses_gnn4)
     np.savez("task4b_theta.npz", gnn3.Theta, gnn4.Theta)
     
     ### 学習曲線の描画
@@ -108,10 +108,10 @@ if __name__ == '__main__':
     margin = 0.025
     plt.ylim(loss_max*(-margin),loss_max*(1+margin))
     plt.xlim(-margin*epochs,epochs)
-    p1=plt.plot(x_arr,losses_gnn3[0])  # loss, GNN3
-    p2=plt.plot(x_arr,losses_gnn3[3])  # vloss, GNN3
-    p3=plt.plot(x_arr,losses_gnn4[0])    # loss, GNN4
-    p4=plt.plot(x_arr,losses_gnn4[3])    # vloss, GNN4
+    p1=plt.plot(x_arr, losses_gnn3[0], zorder=0)    # loss, GNN3
+    p2=plt.plot(x_arr, losses_gnn3[3], zorder=3)    # vloss, GNN3
+    p3=plt.plot(x_arr, losses_gnn4[0], zorder=1)    # loss, GNN4
+    p4=plt.plot(x_arr, losses_gnn4[3], zorder=4)    # vloss, GNN4
     plt.grid(True)
     plt.legend((p1[0],p2[0],p3[0],p4[0]),
                ("loss, GNN3 (with %s)" % optstr[optn], "vloss, GNN3 (with %s)" % optstr[optn],

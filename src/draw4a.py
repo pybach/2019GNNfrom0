@@ -4,7 +4,7 @@ if __name__ == '__main__':
 
     epochs = 30
 
-    data = np.load('task4a_losses04.npz')
+    data = np.load('task4a_losses03.npz')
     data.allow_pickle=True
     losses_SGD = data['arr_0']
     losses_mSGD = data['arr_1']
@@ -23,7 +23,7 @@ if __name__ == '__main__':
         p2=plt.plot(x_arr,losses_mSGD[5])
         p3=plt.plot(x_arr,losses_Adam[5])
         plt.legend((p1[0],p2[0],p3[0]),
-                   ("acc, SGD", "acc, momentum SGD", "acc, Adam"),
+                   ("vacc, SGD", "vacc, momentum SGD", "vacc, Adam"),
                    loc=1)
     else:
         ### 学習曲線の描画
@@ -46,4 +46,4 @@ if __name__ == '__main__':
     plt.grid(True)
     # plt.set_axisbelow(True)
     # 学習曲線プロットをファイルに保存
-    plt.savefig("task4a_plot04acc.pdf")
+    plt.savefig("task4a_plot03a.pdf")

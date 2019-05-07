@@ -86,11 +86,16 @@ class GNN2(GNN1):
 # end of GNN2
 
 # sigmoid function
+# （overflow回避のため、xの正負で等価な式に場合分けして計算。）
 def sigmoid(x):
-    return 1/(1 + math.exp(-x))
+    if x >= 0:
+        return 1/(1 + math.exp(-x))
+    else:
+        ex = math.exp(x)
+        return ex/(1+ex)
 
 # binary-crossentropy
-# （overflow回避のため、sの正負で等価な式に場合分けして計算。）
+# （sigmoidと同様、sの正負で場合分け。）
 def binary_cross_entropy(y,s):
     # p = sigmoid(s)
     if s >= 0:

@@ -21,12 +21,13 @@ if __name__ == '__main__':
         graphs.append(graph)
 
 
-    data = np.load('task4a_theta03.npz')
-    data.allow_pickle=True
-    Theta_SGD = data['arr_0']
-    Theta_mSGD = data['arr_1']
-    Theta_Adam = data['arr_2']
+#    data = np.load('task4a_theta03.npz')
+#    data.allow_pickle=True
+#    Theta_SGD = data['arr_0']
+#    Theta_mSGD = data['arr_1']
+#    Theta_Adam = data['arr_2']
 
+    Theta_Adam = np.load('task4b_theta_8_2_1_50_12690.npz.npy')
     D, T = 8, 2
     gnn3 = GNN3(D,T)
     gnn3.Theta[:] = Theta_Adam
