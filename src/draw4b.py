@@ -4,7 +4,7 @@ if __name__ == '__main__':
 
     epochs = 30
 
-    data = np.load('task4b_losses02.npz')
+    data = np.load('task4b_losses05.npz')
     data.allow_pickle=True
     losses_gnn3 = data['arr_0']
     losses_gnn4 = data['arr_1']
@@ -44,4 +44,4 @@ if __name__ == '__main__':
     plt.grid(True)
     # plt.set_axisbelow(True)
     # 学習曲線プロットをファイルに保存
-    plt.savefig("task4b_plot02acc.pdf")
+    plt.savefig("task4b_plot05a.pdf")

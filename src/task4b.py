@@ -51,6 +51,7 @@ class GNN4(GNN3):
 ################################################################################
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
+    from task4a import Adam
 
     ### 学習用データ
     Ndata = 2000
@@ -77,17 +78,16 @@ if __name__ == '__main__':
     ############################################################################
     ### 動作確認と性能評価（GNN4とGNN3の比較）
     D, T = 8, 2
-    epochs = 30
+    epochs = 50
 
     # GNN3とGNN4
     # あまり意味はないかもしれないが、気休め程度に初期値を合わせておく。
     gnn4 = GNN4(D,T)
     gnn3 = GNN3(D,T,W0=gnn4.W[0], A0=gnn4.A, b0=gnn4.b[0])
 
-    from task4a import Adam
     optstr = ['SGD', 'mSGD', 'Adam']
     opts = [SGD, MomentumSGD, Adam]
-    optn = 1 # MomentumSGDを使用
+    optn = 2 # Adamを使用
     opt = opts[optn]
 
     # それぞれ学習。

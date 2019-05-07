@@ -36,5 +36,5 @@
 - `task4a.py`の実行結果は`task3.py`と同様ですが、さらにAdamの結果が加わります。またエポック数は30としています。  
 保存されるファイルはそれぞれ`task4a_losses.npz`、`task4a_theta.npz`、`task4a_plot.pdf`です。
 
-- `task4b.py`は、同様の学習で従来の単層ネットワーク`GNN3`と、多層化したネットワーク`GNN4`のパフォーマンス比較を行うものです。最適化アルゴリズムはmomentum SGDに統一しています。  
+- `task4b.py`は、同様の学習で従来の単層ネットワーク`GNN3`と、多層化したネットワーク`GNN4`のパフォーマンス比較を行うものです。50エポックまでで、最適化アルゴリズムはAdamに統一しています。  
 保存されるファイルはそれぞれ`task4b_losses.npz`、`task4b_theta.npz`、`task4b_plot.pdf`です。
